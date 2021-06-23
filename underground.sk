@@ -1,4 +1,6 @@
-﻿on first join:
+on load:
+    register new shaped recipe for gold ingot named "&c분석기" using air, iron block, air, iron block, diamond, iron block, air, iron block, air
+on first join:
     wait 1 second
     execute console command "execute at %player% as %player% run 튜토리얼"
 on join:
@@ -54,6 +56,11 @@ command /치료 [<text>]:
                             send "&e&l도전 과제 달성! 구사일생"
                         give 50 of paper to player
                         set {%arg 1 parsed as player%.zombie} to 1
+on rightclick:
+    if player's tool is gold ingot named "&c분석기":
+        open chest with 1 rows named "&c분석기" to player
+on craft of paper:
+    cancel event
 command /구로비:
     trigger:
         execute console command "execute at %player% as %player% run tp -206 72 333"
@@ -64,19 +71,10 @@ command /좀비 [<number>]:
     trigger:
         if player's name is "EmPoKa_":
             set {%player%.zombie} to arg 1
+every 1 seconds:
+    loop all players:
+        execute console command "execute as %loop-player% at %loop-player% run fill ~5 ~5 ~5 ~-5 ~-5 ~-5 dirt replace grass_block"
 on walk on dirt:
-    if player's world is not "sangwoons":
-        if {%player%.until} is true:
-            ignite the player for 30 seconds
-            chance of 10%:
-                execute console command "effect give %player% instant_damage 1 1"
-on walk on grass block:
-    if player's world is not "sangwoons":
-        if {%player%.until} is true:
-            ignite the player for 30 seconds
-            chance of 10%:
-                execute console command "effect give %player% instant_damage 1 1"
-on walk on grass path:
     if player's world is not "sangwoons":
         if {%player%.until} is true:
             ignite the player for 30 seconds
@@ -89,7 +87,6 @@ on walk on farmland:
                 ignite the player for 30 seconds
                 chance of 10%:
                     execute console command "effect give %player% instant_damage 1 1"
-
 on walk on grass block:
     if player's world is not "sangwoons":
         chance of 5%:
@@ -117,7 +114,20 @@ command /불잠깐끄기 [<text>]:
             if {%arg 1 parsed as player%.until} is true:
                 set {%arg 1 parsed as player%.until} to false
                 stop
-
+on rightclick:
+    if player's tool is wooden shovel:
+        cancel event
+    if player's tool is stone shovel:
+        cancel event
+    if player's tool is golden shovel:
+        if event-block is dirt path:
+            cancel event
+    if player's tool is diamond shovel:
+        cancel event
+    if player's tool is iron shovel:
+        cancel event
+    if player's tool is netherite shovel:
+        cancel event
 command /금삽:
     trigger:
         give 1 golden shovel to player
@@ -142,7 +152,8 @@ command /check:
             execute console command "execute at %player% as %player% run summon zombie ~ ~ ~ {Silent:1b,CustomNameVisible:1b,Health:30f,HandItems:[{id:""minecraft:netherite_sword"",Count:1b},{}],HandDropChances:[0.000F,0.085F],ArmorItems:[{},{id:""minecraft:leather_leggings"",Count:1b,tag:{display:{Name:'{""text"":""좀비의 가죽 바지"",""color"":""dark_red"",""bold"":true}',color:6553459},Enchantments:[{id:""minecraft:protection"",lvl:10s},{id:""minecraft:unbreaking"",lvl:3s},{id:""minecraft:mending"",lvl:1s}],AttributeModifiers:[{AttributeName:""generic.max_health"",Name:""generic.max_health"",Amount:6,Operation:0,UUID:[I;-2013073515,-1631369651,-1982140642,-58432959]}]}},{id:""minecraft:netherite_chestplate"",Count:1b,tag:{Enchantments:[{id:""minecraft:protection"",lvl:2s},{id:""minecraft:unbreaking"",lvl:1s}]}},{id:""minecraft:netherite_helmet"",Count:1b,tag:{Unbreakable:1b,Enchantments:[{id:""minecraft:protection"",lvl:2s},{id:""minecraft:unbreaking"",lvl:1s}]}}],ArmorDropChances:[0.085F,0.200F,0.000F,0.000F],Attributes:[{Name:generic.movement_speed,Base:2},{Name:generic.attack_damage,Base:2048}]}"
 every 10 minutes:
     execute console command "save-all"
-
+every 30 seconds:
+    execute console command "fill -301 42 258 -316 48 282 air"
 every 1 tick:
     loop all players:
         if loop-player's world is "survival":
@@ -163,7 +174,7 @@ command /psh [<text>]:
             delete {%player%.until}
         if arg 1 is "back":
             execute console command "mvtp %player% world"
-every 100 seconds:
+every 800 seconds:
     loop all players:
         set {_rgrandom} to random integer between 1 and 2
         if {_rgrandom} is 1:
@@ -226,21 +237,17 @@ every 40 seconds:
                         execute console command "execute as %loop-player% at %loop-player% run data merge block ~%{_x}% ~%{_y}% ~%{_z}% {Items:[{Slot:0b,id:""minecraft:experience_bottle"", Count:16b}]}"
                     if {_chr} is 15:
                         execute console command "execute as %loop-player% at %loop-player% run data merge block ~%{_x}% ~%{_y}% ~%{_z}% {Items:[{Slot:0b,id:""minecraft:book"",Count:1b,tag:{display:{Name:'{""text"":""베일에 싸인 책"",""color"":""gold"",""bold"":true}'}}}]}"
-        if {%loop-player%.bullun} is true:
-            if {%loop-player%.bullunn} is 0:
-                set {%loop-player%.bullun} to false
-                broadcast "%loop-player%님의 불운 효과가 &a제거되었습니다!"
-                stop
-            set {%loop-player%.bullunn} to {%loop-player%.bullunn} - 1
     broadcast "상자가 생성되었습니다!"
-
-
 command /chccc [<text>]:
     trigger:
         if executor is console:
             broadcast "&l%arg 1%님이 &6마인리스트나 SKH 리스트&f에 추천해 주셨습니다. 여러분들도 추천하시고 보상 받아가세요!"
 every 1 minute:
     broadcast "&l마인리스트 주소: https://minelist.kr/servers/shelter.bon24.kr" 
+
+on projectile hit:
+    if the projectile is a snowball:
+        create explosion of force 3 at projectile
 
 on mine:
     if player's world is not "sangwoons":
@@ -257,7 +264,14 @@ on place:
                 stop
             if player's y-coord >= 70:
                 cancel event
-
+command /상자 [<text>]:
+    trigger:
+        if arg 1 is not set:
+            send "상자 사용법: /상자 [키기:끄기]"
+        if arg 1 is "키기":
+            set {%player%.bullun} to true
+        if arg 1 is "끄기":
+            set {%player%.bullun} to false   
 command /창고:
     trigger:
         if player's world is not "sangwoons":
@@ -329,12 +343,15 @@ on inventory click:
             set slot 17 of player's current inventory to music disc 13 named "[ 성급한 성급함 X ]" with lore "디스코드에서 확인" and "가격: 250종이"
             set slot 18 of player's current inventory to music disc 13 named "[ 빌려온 시간: 빠른 손놀림 ]" with lore "디스코드에서 확인" and "가격: 250종이"
             set slot 19 of player's current inventory to music disc 13 named "[ 균형잡힌 착지: 슈퍼히어로 랜딩 ]" with lore "디스코드에서 확인" and "가격: 200종이"
+            set slot 20 of player's current inventory to music disc 13 named "[ 결정적인 일격 ]" with lore "좀비에게 10대 맞았을 때 자신에게 즉시 치유 포션을 떨군다." and "가격: 250종이"
+            set slot 21 of player's current inventory to music disc 11 named "[ 물고기 불고기 1 ]" with lore "디스코드에서 확인" and "가격: 100종이"
+            set slot 22 of player's current inventory to music disc stal named "[ 물고기 불고기 2 ]" with lore "디스코드에서 확인" and "가격: 150종이"
         clicked slot is 11:
             cancel event
             close inventory of player
             open chest with 3 rows named "&e [ 일반 상점 ] " to player
             set slot 0 of player's current inventory to bow named "활" with lore "가격: 50종이"
-            set slot 1 of player's current inventory to dragon breath named "&3[ 불운 ]" with lore "200초간 당신 근처에는 전리품 상자가 생성되지 않습니다." and "가격: 10종이"
+            set slot 1 of player's current inventory to red stained glass pane named "&3삭제됨" with lore "삭제됨" and "가격: 10종이"
             set slot 2 of player's current inventory to 2 arrow named "화살 x 2" with lore "가격: 1종이"
             set slot 3 of player's current inventory to 1 iron pickaxe named "퀵 픽" with lore "가격: 100종이"
             set slot 4 of player's current inventory to 1 villager spawn egg named "주민 알" with lore "가격: 500종이"
@@ -345,6 +362,7 @@ on inventory click:
             set slot 10 of player's current inventory to 1 water bottle named "&e슈퍼 물" with lore "가격: 15종이" and "물 게이지가 음수일 때 즉시 물 게이지를 5로 회복시켜 줍니다."
             set slot 12 of player's current inventory to 1 iron ingot named "&2&l백신" with lore "가격: 10종이"
             set slot 13 of player's current inventory to 1 spawn egg named "&2&l무작위 알" with lore "가격: 200종이"
+            set slot 14 of player's current inventory to 1 snowball named "눈덩이" with lore "가격: 50종이" and "닿는 곳에 폭발을 일으킵니다."
         clicked slot is 12:
             cancel event
             if amount of cobblestone in inventory of player >= 64:
@@ -369,6 +387,7 @@ on inventory click:
             set slot 0 of player's current inventory to iron block named "철 x 20" with lore "을 종이 5개로"
             set slot 1 of player's current inventory to stone named "돌 x 30" with lore "을 종이 5개로"
             set slot 2 of player's current inventory to stone named "조약돌 x 10" with lore "을 불운으로"
+            set slot 3 of player's current inventory to sugar cane named "사탕수수 x 10" with lore "을 종이 2개로"
             
     if name of player's current inventory is "&e [ 어빌리티 상점 ] ":
         clicked slot is 0:
@@ -535,6 +554,34 @@ on inventory click:
                     send "&l&e도전 과제 달성! 기술 구매자"
                     set {%player%.achi.1} to "clear"
                 send "&3성공적으로 구매했습니다!"
+        clicked slot is 20:
+            cancel event
+            if amount of paper in inventory of player >= 250:
+                remove 250 of paper from inventory of player
+                set {%player%.perk7} to "short"
+                set {%player%.perk7.conf} to 1
+                if {%player%.achi.1} is not set:
+                    send "&l&e도전 과제 달성! 기술 구매자"
+                    set {%player%.achi.1} to "clear"
+                send "&3성공적으로 구매했습니다!"
+        clicked slot is 21:
+            cancel event
+            if amount of paper in inventory of player >= 100:
+                remove 100 of paper from inventory of player
+                set {%player%.perk8} to "short"
+                if {%player%.achi.1} is not set:
+                    send "&l&e도전 과제 달성! 기술 구매자"
+                    set {%player%.achi.1} to "clear"
+                send "&3성공적으로 구매했습니다!"
+        clicked slot is 22:
+            cancel event
+            if amount of paper in inventory of player >= 150:
+                remove 150 of paper from inventory of player
+                set {%player%.perk8} to "mid"
+                if {%player%.achi.1} is not set:
+                    send "&l&e도전 과제 달성! 기술 구매자"
+                    set {%player%.achi.1} to "clear"
+                send "&3성공적으로 구매했습니다!"
     if name of player's current inventory is "&e [ 일반 상점 ] ":
         clicked slot is 0:
             cancel event
@@ -544,10 +591,6 @@ on inventory click:
                 send "&3성공적으로 구매했습니다!"
         clicked slot is 1:
             cancel event
-            if amount of paper in inventory of player >= 10:
-                remove 10 of paper from inventory of player
-                give 1 dragon breath named "&3[ 불운 ]" with lore "200초간 당신 근처에는 전리품 상자가 생성되지 않습니다." to player
-                send "&3성공적으로 구매했습니다!"
         clicked slot is 2:
             cancel event
             if amount of paper in inventory of player >= 1:
@@ -622,6 +665,11 @@ on inventory click:
                 if {_randomal} is 4:
                     give 1 of sheep spawn egg to player
                 send "&3성공적으로 구매했습니다!"
+        clicked slot is 14:
+            cancel event
+            if amount of paper in inventory of player >= 50:
+                remove 50 of paper from inventory of player
+                give 1 snowball to player
     if name of player's current inventory is "&e [ 매그놀리아의 오픈 마켓 ] ":
         clicked slot is 0:
             cancel event
@@ -641,12 +689,23 @@ on inventory click:
                 remove 10 of cobblestone from inventory of player
                 give 1 dragon breath named "&3[ 불운 ]" with lore "200초간 당신 근처에는 전리품 상자가 생성되지 않습니다." to player
                 send "&3성공적으로 구매했습니다!"
+        clicked slot is 3:
+            cancel event
+            if amount of sugar cane in inventory of player >= 10:
+                remove 10 of sugar cane from inventory of player
+                give 2 paper to player
+                send "&3성공적으로 구매했습니다!"
 
 on right click:
     if name of player's tool is "&1마법 막대기":
         if event-block is chest:
             execute console command "fill %round down (event-block's x-coord)% %round down (event-block's y-coord)% %round down (event-block's z-coord)% %round down (event-block's x-coord)% %round down (event-block's y-coord)% %round down (event-block's z-coord)% air"
-
+command /변수지우기:
+    trigger:
+        if player's name is "EmPoKa_": 
+            delete {%player%.perk5}
+            delete {%player%.perk4}
+            delete {%player%.perk3}
 command /캐시카드:
     trigger:
         if player's name is "EmPoKa_":
@@ -660,6 +719,14 @@ on rightclick:
         remove 1 of dragon breath from inventory of player
         set {%player%.bullun} to true
         set {%player%.bullunn} to 5
+on damage:
+    if {%victim%.perk7} is "short":
+        if attacker is a zombie:
+            add 1 to {%victim%.perk7.conf}
+            play sound "entity.arrow.hit_player" with volume 1 and pitch 2 at victim
+            if {%victim%.perk7.conf} is 10:
+                set {%victim%.perk7.conf} to 1
+                execute console command "execute at %victim% as %victim% run summon potion ~ ~ ~ {Item:{id:""minecraft:splash_potion"",Count:1b,tag:{Potion:""minecraft:healing"",CustomPotionColor:708351,Enchantments:[{}]}}}"
 
 on right click:
     if event-block's y-coord >= 70:
